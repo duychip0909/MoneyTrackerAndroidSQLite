@@ -8,33 +8,33 @@ public class Category {
         INCOME
     }
 
-    private int id;
-    private Integer userId;
+    private long id;
+    private Long userId;
     private String name;
     private Type type;
     private boolean isDefault;
     public Category() {}
 
-    public Category(Integer userId, String name, Type type, boolean isDefault) {
+    public Category(Long userId, String name, Type type, boolean isDefault) {
         this.userId = userId;
         this.name = name;
         this.type = type;
         this.isDefault = isDefault;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

@@ -3,7 +3,7 @@ package com.example.moneytrackerandroidsqlite.models;
 import java.util.Date;
 
 public class User {
-    private int id;
+    private long id;
     private String username;
     private String password;
     private String email;
@@ -18,11 +18,11 @@ public class User {
         this.createdAt = new Date();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
