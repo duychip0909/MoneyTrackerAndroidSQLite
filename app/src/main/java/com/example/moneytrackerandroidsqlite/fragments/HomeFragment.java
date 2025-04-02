@@ -1,11 +1,22 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.fragments;
 
+import android.icu.text.SimpleDateFormat;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.TransactionAdapter;
+
+import java.util.Date;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     private TextView tvGreeting;
@@ -37,14 +48,14 @@ public class HomeFragment extends Fragment {
         setupRecyclerView();
 
         // Load data
-        loadData();
+//        loadData();
 
         return view;
     }
 
     private void setupRecyclerView() {
         rvRecentTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
-        transactionAdapter = new TransactionAdapter(new ArrayList<>());
+        transactionAdapter = new TransactionAdapter(new Ar                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  rayList<>());
         rvRecentTransactions.setAdapter(transactionAdapter);
     }
 }
