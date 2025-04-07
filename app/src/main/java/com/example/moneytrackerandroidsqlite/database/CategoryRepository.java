@@ -1,6 +1,7 @@
 package com.example.moneytrackerandroidsqlite.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -11,8 +12,8 @@ import java.util.List;
 
 public class CategoryRepository {
     private DBHelper dbHelper;
-    public CategoryRepository(DBHelper dbHelper) {
-        this.dbHelper = dbHelper;
+    public CategoryRepository(Context context) {
+        this.dbHelper = DBHelper.getInstance(context);
     }
     public long createCategory(Category category) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();

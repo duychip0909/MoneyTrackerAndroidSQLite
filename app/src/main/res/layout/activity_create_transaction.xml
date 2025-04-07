@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/create_tx"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".CreateTransactionActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create new transaction"
+        android:textStyle="bold"
+        android:textSize="28sp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_amount"
+        android:inputType="number"
+        android:hint="Amount"
+        android:layout_marginTop="16dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:id="@+id/edit_text_notes"
+        android:layout_height="wrap_content"
+        android:lines="5"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:hint="Notes"
+        android:gravity="top"
+        android:layout_marginTop="16dp"
+        android:inputType="textMultiLine"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_select_cate"
+        android:text="Choose category"
+        app:cornerRadius="0dp"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/material_on_surface_stroke"
+        android:textAlignment="textStart"
+        android:layout_marginTop="16dp"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_date"
+        android:text="Choose date"
+
+        app:cornerRadius="0dp"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/material_on_surface_stroke"
+        android:textAlignment="textStart"
+        android:layout_marginTop="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        app:cornerRadius="0dp"
+        android:text="Create"/>
+</LinearLayout>

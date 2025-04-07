@@ -1,6 +1,7 @@
 package com.example.moneytrackerandroidsqlite.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -16,8 +17,8 @@ import java.util.Locale;
 public class UserRepository {
     private DBHelper dbHelper;
     private SimpleDateFormat dateFormat;
-    public UserRepository(DBHelper dbHelper) {
-        this.dbHelper = dbHelper;
+    public UserRepository(Context context) {
+        this.dbHelper = DBHelper.getInstance(context);
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     }
     public long createNewUser(User user) {
@@ -97,7 +98,11 @@ public class UserRepository {
     public User authenticate(String username, String password) {
         User user = getUserByUsername(username);
         if (user != null) {
-            if (SecurityUtils.verifyPassword(password, user.getPassword())) {
+//            if (SecurityUtils.verifyPassword(password, user.getPassword())) {
+//                updateLastLogin(user.getId());
+//                return user;
+//            }
+            if (password.equals(user.getPassword())) {
                 updateLastLogin(user.getId());
                 return user;
             }

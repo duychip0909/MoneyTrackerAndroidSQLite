@@ -120,11 +120,17 @@ public class DBHelper extends SQLiteOpenHelper {
         // Insert income categories
         insertCategory(db, null, "Salary", "INCOME", 1);
         insertCategory(db, null, "Gift", "INCOME", 1);
+        insertUser(db, null, "duychip", "duychip9901@gmail.com", "123456");
     }
 
     private void insertCategory(SQLiteDatabase db, Integer userId, String name, String type, int isDefault) {
-        String sql = "INSERT INTO Categories (userId, name, type, isDefault) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Categories (user_id, name, type, is_default) VALUES (?, ?, ?, ?)";
         Object[] bindArgs = new Object[]{userId, name, type, isDefault};
+        db.execSQL(sql, bindArgs);
+    }
+    private void insertUser(SQLiteDatabase db, Long id, String username, String email, String password) {
+        String sql = "INSERT INTO Users (id, username, email, password) VALUES (?, ?, ?, ?)";
+        Object[] bindArgs = new Object[]{id, username, email, password};
         db.execSQL(sql, bindArgs);
     }
 }
