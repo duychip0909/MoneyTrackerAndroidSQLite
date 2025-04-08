@@ -50,7 +50,7 @@ public class UserRepository {
             if (user.getPassword() != null) {
                 values.put("password", user.getPassword());
             }
-            int rowsAffected = db.update("Users", values, "user_id = ?", new String[]{String.valueOf(user.getId())});
+            int rowsAffected = db.update("Users", values, "id = ?", new String[]{String.valueOf(user.getId())});
             success = rowsAffected > 0;
         } catch (Exception e) {
             Log.e("UserRepo", "Error updating user: " + e.getMessage());
@@ -60,7 +60,7 @@ public class UserRepository {
     public User getUserById(long id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         User user = null;
-        Cursor cursor = db.query("Users", null, "user_id = ?", new String[]{String.valueOf(id)}, null, null, null);
+        Cursor cursor = db.query("Users", null, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
         if (cursor.moveToFirst()) {
             user = cursorToUser(cursor);
             cursor.close();

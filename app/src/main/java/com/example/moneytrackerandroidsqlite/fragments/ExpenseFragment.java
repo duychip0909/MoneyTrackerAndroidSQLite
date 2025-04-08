@@ -43,7 +43,8 @@ public class ExpenseFragment extends Fragment {
             public void onCategoryClick(Category category) {
                 if (getActivity() != null) {
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra("SELECTED_CATEGORY", category.getName());
+                    resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
+                    resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
                     getActivity().setResult(getActivity().RESULT_OK, resultIntent);
                     getActivity().finish();
                 }
