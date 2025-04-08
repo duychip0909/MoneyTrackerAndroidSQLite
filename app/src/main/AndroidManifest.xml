@@ -13,10 +13,10 @@
         android:theme="@style/Theme.MoneyTrackerAndroidSQLite"
         tools:targetApi="31">
         <activity
-            android:name=".CategoryActivity"
+            android:name=".activities.CategoryActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateTransactionActivity"
+            android:name=".activities.CreateTransactionActivity"
             android:exported="false" />
         <activity
             android:name=".activities.RegisterActivity"

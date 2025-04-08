@@ -1,6 +1,5 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +9,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.CategoryViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
