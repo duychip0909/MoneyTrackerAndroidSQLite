@@ -49,8 +49,7 @@ public class HomeFragment extends Fragment {
         // Set date
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
         tvDate.setText(dateFormat.format(new Date()));
-//        Log.d("current_user", authManager.getCurrentUser().getUsername());
-        tvGreeting.setText("fuck");
+        tvGreeting.setText(authManager.getCurrentUser().getUsername());
         // Set up RecyclerView
 //        setupRecyclerView();
 

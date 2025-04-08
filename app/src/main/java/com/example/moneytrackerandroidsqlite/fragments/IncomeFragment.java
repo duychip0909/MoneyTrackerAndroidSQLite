@@ -1,5 +1,6 @@
 package com.example.moneytrackerandroidsqlite.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -35,7 +36,17 @@ public class IncomeFragment extends Fragment {
         authManager = AuthManager.getInstance(view.getContext());
         incomeCates = categoryRepository.getCategoriesByType(authManager.getCurrentUser().getId(), Category.Type.INCOME);
         incomeCateRv.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        icAdapter = new ExpenseCategoryAdapter(view.getContext(), incomeCates);
+        icAdapter = new ExpenseCategoryAdapter(view.getContext(), incomeCates, new ExpenseCategoryAdapter.OnCategoryClickListener() {
+            @Override
+            public void onCategoryClick(Category category) {
+                if (getActivity() != null) {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("SELECTED_CATEGORY", category.getName());
+                    getActivity().setResult(getActivity().RESULT_OK, resultIntent);
+                    getActivity().finish();
+                }
+            }
+        });
         incomeCateRv.setAdapter(icAdapter);
         return view;
     }
