@@ -1,5 +1,4 @@
-﻿# MoneyTrackerAndroidSQLite
-Project Title: Android Expense Management App (Java + SQLite)
+# Project Title: Android Expense Management App (Java + SQLite)
 
 ---
 
