@@ -7,13 +7,13 @@ public class Transaction {
         EXPENSE,
         INCOME
     }
-    private int id;
-    private int userId;
-    private int categoryId;
+    private long id;
+    private long userId;
+    private long categoryId;
     private double amount;
     private Type type;
     private String notes;
-    private Date date;
+    private Long date;
     private Date createdAt;
     private Date updatedAt;
 
@@ -21,7 +21,7 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(int userId, int categoryId, double amount, Type type, String notes, Date date, Date createdAt, Date updatedAt) {
+    public Transaction(long userId, long categoryId, double amount, Type type, String notes, Long date, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.categoryId = categoryId;
         this.amount = amount;
@@ -32,7 +32,7 @@ public class Transaction {
         this.updatedAt = new Date();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -40,19 +40,19 @@ public class Transaction {
         this.id = id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public int getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -80,11 +80,11 @@ public class Transaction {
         this.notes = notes;
     }
 
-    public Date getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

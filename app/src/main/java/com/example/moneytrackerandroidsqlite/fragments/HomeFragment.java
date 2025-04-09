@@ -15,12 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.TransactionAdapter;
+import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
+import com.example.moneytrackerandroidsqlite.models.Transaction;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeFragment extends Fragment {
@@ -32,6 +35,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvRecentTransactions;
     private TransactionAdapter transactionAdapter;
     AuthManager authManager;
+    private TransactionRepository transactionRepository;
 
     @Nullable
     @Override
@@ -46,22 +50,32 @@ public class HomeFragment extends Fragment {
         tvExpensesAmount = view.findViewById(R.id.tvExpensesAmount);
         rvRecentTransactions = view.findViewById(R.id.rvRecentTransactions);
 
+        transactionRepository = new TransactionRepository(view.getContext());
+
         // Set date
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
         tvDate.setText(dateFormat.format(new Date()));
         tvGreeting.setText(authManager.getCurrentUser().getUsername());
         // Set up RecyclerView
-//        setupRecyclerView();
-
-        // Load data
-//        loadData();
-
+        rvRecentTransactions.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        loadTx();
         return view;
     }
 
-//    private void setupRecyclerView() {
-//        rvRecentTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
-//        transactionAdapter = new TransactionAdapter(new ArrayList<>());
-//        rvRecentTransactions.setAdapter(transactionAdapter);
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadTx();
+    }
+
+    private void loadTx() {
+        List<Transaction> recentTxs;
+        recentTxs = transactionRepository.getNearestTransactions("2025-04-09", 5);
+        if (transactionAdapter == null) {
+            transactionAdapter = new TransactionAdapter(getContext(), recentTxs);
+            rvRecentTransactions.setAdapter(transactionAdapter);
+        } else {
+            transactionAdapter.setTransactions(recentTxs);
+        }
+    }
 }

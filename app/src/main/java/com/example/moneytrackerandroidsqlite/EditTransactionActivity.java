@@ -1,5 +1,6 @@
-package com.example.moneytrackerandroidsqlite.activities;
+package com.example.moneytrackerandroidsqlite;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -20,49 +21,61 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.moneytrackerandroidsqlite.R;
+import com.example.moneytrackerandroidsqlite.activities.CategoryActivity;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
-import com.example.moneytrackerandroidsqlite.databinding.ActivityCreateTransactionBinding;
+import com.example.moneytrackerandroidsqlite.databinding.ActivityEditTransactionBinding;
 import com.example.moneytrackerandroidsqlite.models.Category;
+import com.example.moneytrackerandroidsqlite.models.Transaction;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CreateTransactionActivity extends AppCompatActivity {
-    private ActivityCreateTransactionBinding binding;
+public class EditTransactionActivity extends AppCompatActivity {
+    ActivityEditTransactionBinding binding;
     private EditText etAmount, etNote;
-    private Button dateBtn, cateBtn, createTxBtn;
+    private Button dateBtn;
+    private Button cateBtn;
     private TransactionRepository transactionRepository;
     private CategoryRepository categoryRepository;
     private Calendar selectedDate;
     private AuthManager authManager;
-    private Long selectedCategoryId;
-    private String selectedCategoryType;
-
+    Long txId;
+    Long selectedCategoryId;
+    String selectedCategoryType;
+    Transaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        binding = ActivityCreateTransactionBinding.inflate(getLayoutInflater());
+        binding = ActivityEditTransactionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.create_tx), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_tx), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        txId = getIntent().getLongExtra("TRANSACTION_EDIT_ID", -1);
+
+        if (txId == -1) {
+            Toast.makeText(this, "Transaction id not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        authManager = AuthManager.getInstance(this);
+        transactionRepository = new TransactionRepository(this);
+        categoryRepository = new CategoryRepository(this);
+        transaction = transactionRepository.getTxById(authManager.getCurrentUser().getId(), txId);
 
         etAmount = binding.editTextAmount;
         etNote = binding.editTextNotes;
-        cateBtn = binding.buttonSelectCate;
         dateBtn = binding.buttonDate;
-        createTxBtn = binding.createTxBtn;
-
-        transactionRepository = new TransactionRepository(this);
-        categoryRepository = new CategoryRepository(this);
-        authManager = AuthManager.getInstance(this);
+        cateBtn = binding.buttonSelectCate;
+        Button updateTxBtn = binding.updateTxBtn;
+        selectedDate = Calendar.getInstance();
 
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,31 +84,52 @@ public class CreateTransactionActivity extends AppCompatActivity {
             }
         });
 
-        createTxBtn.setOnClickListener(new View.OnClickListener() {
+        updateTxBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleCreateTx();
+                handleUpdateTx();
             }
         });
 
         cateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreateTransactionActivity.this, CategoryActivity.class);
+                Intent intent = new Intent(EditTransactionActivity.this, CategoryActivity.class);
                 onSelectedCategory.launch(intent);
             }
         });
 
-        selectedDate = Calendar.getInstance();
-        updateDateDisplay();
+        loadTransactionData(transaction);
+    }
+
+    private void loadTransactionData(Transaction transaction) {
+        if (transaction != null) {
+            etAmount.setText(String.valueOf(transaction.getAmount()));
+            etNote.setText(transaction.getNotes());
+
+            // Set date
+            selectedDate.setTimeInMillis(transaction.getDate());
+            updateDateDisplay();
+
+            // Set category
+            selectedCategoryId = transaction.getCategoryId();
+            Category category = categoryRepository.getCategoryById(selectedCategoryId);
+            if (category != null) {
+                cateBtn.setText(category.getName());
+                selectedCategoryType = category.getType().toString();
+            }
+        } else {
+            Toast.makeText(this, "Error: Transaction not found", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void updateDateDisplay() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-YYYY", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         dateBtn.setText(dateFormat.format(selectedDate.getTime()));
     }
 
-    private void handleCreateTx() {
+    private void handleUpdateTx() {
         if (etAmount.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, "Please enter an amount", Toast.LENGTH_SHORT).show();
             return;
@@ -103,13 +137,23 @@ public class CreateTransactionActivity extends AppCompatActivity {
         double amount = Double.parseDouble(etAmount.getText().toString());
         String notes = etNote.getText().toString();
         long dateMillis = selectedDate.getTimeInMillis();
-        Category category = categoryRepository.getCategoryById(selectedCategoryId);
-        boolean success = transactionRepository.addTransaction(authManager.getCurrentUser().getId(), selectedCategoryId, amount, category.getType().toString(), notes, dateMillis);
+
+        boolean success = transactionRepository.updateTransaction(
+                txId,
+                selectedCategoryId,
+                amount,
+                selectedCategoryType,
+                notes,
+                dateMillis
+        );
+
         if (success) {
-            Toast.makeText(this, "Transaction saved successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Transaction updated successfully", Toast.LENGTH_SHORT).show();
+            Intent resIntent = new Intent();
+            this.setResult(RESULT_OK, resIntent);
             finish(); // Close activity and go back
         } else {
-            Toast.makeText(this, "Failed to save transaction", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to update transaction", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -123,6 +167,12 @@ public class CreateTransactionActivity extends AppCompatActivity {
                         String categoryName = data.getStringExtra("SELECTED_CATEGORY_NAME");
                         selectedCategoryId = data.getLongExtra("SELECTED_CATEGORY_ID", -1);
                         cateBtn.setText(categoryName);
+
+                        // Update category type
+                        Category category = categoryRepository.getCategoryById(selectedCategoryId);
+                        if (category != null) {
+                            selectedCategoryType = category.getType().toString();
+                        }
                     }
                 }
             }
@@ -132,19 +182,17 @@ public class CreateTransactionActivity extends AppCompatActivity {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-//                dateBtn.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                 selectedDate.set(Calendar.YEAR, year);
                 selectedDate.set(Calendar.MONTH, month);
                 selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 updateDateDisplay();
-//                lastSelectedYear = year;
-//                lastSelectedMonth = monthOfYear;
-//                lastSelectedDayOfMonth = dayOfMonth;
             }
         };
 
-        DatePickerDialog datePickerDialog = null;
-        datePickerDialog = new DatePickerDialog(this, dateSetListener, selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH));
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener,
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH),
+                selectedDate.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 }

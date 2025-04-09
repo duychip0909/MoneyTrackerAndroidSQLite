@@ -13,6 +13,7 @@ import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,17 +24,12 @@ public class TransactionRepository {
     public TransactionRepository(Context context) {
         dbHelper = DBHelper.getInstance(context);
         authManager = AuthManager.getInstance(context);
-        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        simpleDateFormat = new SimpleDateFormat("DD-MM-YYYY", Locale.getDefault());
     }
     public boolean addTransaction(long userId, long categoryId, double amount,
                                   String type, String notes, long dateMillis) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-
-        Log.d("cid", String.valueOf(categoryId));
-        Log.d("uid", String.valueOf(userId));
-        Log.d("date", String.valueOf(dateMillis));
-        Log.d("cate type", String.valueOf(dateMillis));
         values.put("user_id", userId);
         values.put("category_id", categoryId);
         values.put("amount", amount);
@@ -45,16 +41,17 @@ public class TransactionRepository {
         long result = db.insert("Transactions", null, values);
         return result != -1;
     }
-    public boolean updateTransaction(Transaction transaction) {
+    public boolean updateTransaction(long txId, long categoryId, double amount,
+                                     String type, String notes, long dateMillis) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         boolean success = false;
         ContentValues values = new ContentValues();
-        values.put("category_id", transaction.getId());
-        values.put("amount", transaction.getAmount());
-        values.put("type", String.valueOf(transaction.getType()));
-        values.put("notes", transaction.getNotes());
-        values.put("date", String.valueOf(transaction.getDate()));
-        int affectedRows = db.update("Transactions", values, "id = ?", new String[]{String.valueOf(transaction.getId())});
+        values.put("category_id", categoryId);
+        values.put("amount", amount);
+        values.put("type", type);
+        values.put("notes", notes);
+        values.put("date", dateMillis);
+        int affectedRows = db.update("Transactions", values, "id = ?", new String[]{String.valueOf(txId)});
         success = affectedRows > 0;
         return success;
     }
@@ -68,7 +65,11 @@ public class TransactionRepository {
     public Transaction getTxById(long uId, long tId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Transaction transaction = null;
-        Cursor cursor = db.query("Transactions", null, "id = ? AND user_id = ?", new String[]{String.valueOf(tId)}, null, null, null);
+        String query = "SELECT t.*, c.name as category_name " +
+                "FROM Transactions t " +
+                "JOIN Categories c ON t.category_id = c.id " +
+                "WHERE t.id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(tId)});
         if (cursor.moveToFirst()) {
             transaction = cursorToTx(cursor);
         }
@@ -78,7 +79,11 @@ public class TransactionRepository {
     public List<Transaction> getAllTx(long uId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<Transaction> txs = new ArrayList<>();
-        Cursor cursor = db.query("Transactions", null, "user_id = ?", new String[]{String.valueOf(uId)}, null, null, null);
+        String query = "SELECT t.*, c.name as category_name " +
+                "FROM Transactions t " +
+                "JOIN Categories c ON t.category_id = c.id " +
+                "WHERE t.user_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(uId)});
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Transaction tx = cursorToTx(cursor);
@@ -89,6 +94,25 @@ public class TransactionRepository {
         return txs;
     }
 
+    public List<Transaction> getNearestTransactions(String targetDate, int limit) {
+        List<Transaction> transactions = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT t.*, c.name as category_name " +
+                "FROM Transactions t " +
+                "JOIN Categories c ON t.category_id = c.id " +
+                "ORDER BY ABS(julianday(t.date) - julianday(?)) " +
+                "LIMIT ?";
+        Cursor cursor = db.rawQuery(query, new String[]{targetDate, String.valueOf(limit)});
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Transaction transaction = cursorToTx(cursor);
+            transactions.add(transaction);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return transactions;
+    }
+
     private Transaction cursorToTx(Cursor cursor) {
         Transaction transaction = new Transaction();
         transaction.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
@@ -96,18 +120,25 @@ public class TransactionRepository {
         if (!cursor.isNull(userIdIndex)) {
             transaction.setUserId(cursor.getInt(userIdIndex));
         }
+        transaction.setCategoryId(cursor.getInt(cursor.getColumnIndexOrThrow("category_id")));
         transaction.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow("amount")));
         transaction.setNotes(cursor.getString(cursor.getColumnIndexOrThrow("notes")));
         String typeStr = cursor.getString(cursor.getColumnIndexOrThrow("type"));
         transaction.setType(Transaction.Type.valueOf(typeStr));
+
+        String dateStr = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+        String createdAtStr = cursor.getString(cursor.getColumnIndexOrThrow("created_at"));
+        String updatedAtStr = cursor.getString(cursor.getColumnIndexOrThrow("updated_at"));
+
         try {
-            String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
-            if (date != null) {
-                transaction.setDate(simpleDateFormat.parse(date));
-            }
+            transaction.setDate(Long.parseLong(dateStr));
+            transaction.setCreatedAt(simpleDateFormat.parse(createdAtStr));
+            transaction.setUpdatedAt(simpleDateFormat.parse(updatedAtStr));
         } catch (ParseException e) {
-            Log.e("UserRepo", "Error parsing date: " + e.getMessage());
+            e.printStackTrace();
         }
+        transaction.setCategoryName(cursor.getString(cursor.getColumnIndexOrThrow("category_name")));
+
         return transaction;
     }
 }
