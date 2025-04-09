@@ -12,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.moneytrackerandroidsqlite.CreateCategoryActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.ExpenseCategoryAdapter;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
 import com.example.moneytrackerandroidsqlite.models.Category;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,7 +27,6 @@ public class ExpenseFragment extends Fragment {
     RecyclerView expenseCateRv;
     ExpenseCategoryAdapter ecAdapter;
     CategoryRepository categoryRepository;
-    List<Category> expenseCates;
     AuthManager authManager;
 
     @Override
@@ -36,21 +37,44 @@ public class ExpenseFragment extends Fragment {
         categoryRepository = new CategoryRepository(view.getContext());
         expenseCateRv = view.findViewById(R.id.expense_rv);
         authManager = AuthManager.getInstance(view.getContext());
-        expenseCates = categoryRepository.getCategoriesByType(authManager.getCurrentUser().getId(), Category.Type.EXPENSE);
         expenseCateRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        ecAdapter = new ExpenseCategoryAdapter(view.getContext(), expenseCates, new ExpenseCategoryAdapter.OnCategoryClickListener() {
+        loadCates();
+
+        view.findViewById(R.id.cardCateAdd).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCategoryClick(Category category) {
-                if (getActivity() != null) {
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
-                    resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
-                    getActivity().setResult(getActivity().RESULT_OK, resultIntent);
-                    getActivity().finish();
-                }
+            public void onClick(View v) {
+                startActivity(new Intent(view.getContext(), CreateCategoryActivity.class));
             }
         });
-        expenseCateRv.setAdapter(ecAdapter);
+
         return view;
+    }
+
+    private void loadCates() {
+        List<Category> expenseCates;
+        expenseCates = categoryRepository.getCategoriesByType(authManager.getCurrentUser().getId(), Category.Type.EXPENSE);
+        if (ecAdapter == null) {
+            ecAdapter = new ExpenseCategoryAdapter(getContext(), expenseCates, new ExpenseCategoryAdapter.OnCategoryClickListener() {
+                @Override
+                public void onCategoryClick(Category category) {
+                    if (getActivity() != null) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
+                        resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
+                        getActivity().setResult(getActivity().RESULT_OK, resultIntent);
+                        getActivity().finish();
+                    }
+                }
+            });
+            expenseCateRv.setAdapter(ecAdapter);
+        } else {
+            ecAdapter.setCategories(expenseCates);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadCates();
     }
 }

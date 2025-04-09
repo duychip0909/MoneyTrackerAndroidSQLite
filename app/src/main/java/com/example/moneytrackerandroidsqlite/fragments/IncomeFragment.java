@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.moneytrackerandroidsqlite.CreateCategoryActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.ExpenseCategoryAdapter;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
@@ -49,6 +50,14 @@ public class IncomeFragment extends Fragment {
             }
         });
         incomeCateRv.setAdapter(icAdapter);
+
+        view.findViewById(R.id.cardCateAdd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), CreateCategoryActivity.class));
+            }
+        });
+
         return view;
     }
 }

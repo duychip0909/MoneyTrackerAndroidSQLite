@@ -53,6 +53,12 @@ public class ExpenseCategoryAdapter extends RecyclerView.Adapter<ExpenseCategory
     public int getItemCount() {
         return categories.size();
     }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+        notifyDataSetChanged();
+    }
+
     static class ExpenseViewHolder extends RecyclerView.ViewHolder {
         CardView cardCategory;
         TextView categoryName;
