@@ -29,13 +29,13 @@ public class CategoryRepository {
         }
         return id;
     }
-    public boolean updateCategory(Category category) {
+    public boolean updateCategory(Long cateId, String name, String type) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         boolean success = false;
         ContentValues values = new ContentValues();
-        values.put("name", category.getName());
-        values.put("type", category.getType().toString());
-        int rowsAffected = db.update("Categories", values, "id = ?", new String[]{String.valueOf(category.getId())});
+        values.put("name", name);
+        values.put("type", type);
+        int rowsAffected = db.update("Categories", values, "id = ?", new String[]{String.valueOf(cateId)});
         success = rowsAffected > 0;
         return success;
     }

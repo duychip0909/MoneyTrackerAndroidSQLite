@@ -70,17 +70,11 @@ public class ExpenseFragment extends Fragment {
                 @Override
                 public void onCategoryClick(Category category) {
                     if (getActivity() != null) {
-                        if (isEdit) {
-                            Intent intent = new Intent(getActivity(), CategoryDetailActivity.class);
-                            intent.putExtra("CATE_ID", category.getId());
-                            startActivity(intent);
-                        } else {
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
-                            resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
-                            getActivity().setResult(Activity.RESULT_OK, resultIntent);
-                            getActivity().finish();
-                        }
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
+                        resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
+                        getActivity().setResult(Activity.RESULT_OK, resultIntent);
+                        getActivity().finish();
                     }
                 }
             });
