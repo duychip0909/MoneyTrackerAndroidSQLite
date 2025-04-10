@@ -22,6 +22,7 @@ import com.example.moneytrackerandroidsqlite.fragments.BudgetFragment;
 import com.example.moneytrackerandroidsqlite.fragments.HomeFragment;
 import com.example.moneytrackerandroidsqlite.fragments.SettingFragment;
 import com.example.moneytrackerandroidsqlite.fragments.TransactionFragment;
+import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         bottomNavigationView = binding.bottomNavigation;
         bottomNavigationView.setBackground(null);
         replaceFragment(new HomeFragment());

@@ -28,13 +28,18 @@ public class DateGroupAdapter extends RecyclerView.Adapter<DateGroupAdapter.Date
     private List<String> dateList;
     private Map<String, List<Transaction>> groupedTxs;
     private Map<String, Double> dateTotals;
+    public interface OnItemClickListener {
+        void onItemClick(Long transactionId);
+    }
+    private OnItemClickListener listener;
 
-    public DateGroupAdapter(Context context, List<Transaction> transactions) {
+    public DateGroupAdapter(Context context, List<Transaction> transactions, OnItemClickListener listener) {
         this.context = context;
         this.dateList = new ArrayList<>();
         this.groupedTxs = new LinkedHashMap<>();
         this.dateTotals = new LinkedHashMap<>();
         setTransactions(transactions);
+        this.listener = listener;
     }
 
     public void setTransactions(List<Transaction> transactions) {
@@ -88,7 +93,14 @@ public class DateGroupAdapter extends RecyclerView.Adapter<DateGroupAdapter.Date
         } else {
             holder.tvTotal.setTextColor(context.getColor(R.color.red));
         }
-        TransactionAdapter transactionAdapter = new TransactionAdapter(context, transactions);
+        TransactionAdapter transactionAdapter = new TransactionAdapter(context, transactions, new TransactionAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Long transactionId) {
+                if (listener != null) {
+                    listener.onItemClick(transactionId);
+                }
+            }
+        });
         holder.rvTxs.setLayoutManager(new LinearLayoutManager(context));
         holder.rvTxs.setAdapter(transactionAdapter);
     }

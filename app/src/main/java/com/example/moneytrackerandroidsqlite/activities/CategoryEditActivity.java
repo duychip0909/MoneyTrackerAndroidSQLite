@@ -13,16 +13,17 @@ import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.CategoryViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryEditActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager2 viewPager2;
     CategoryViewPagerAdapter categoryViewPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_category);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.category), (v, insets) -> {
+        setContentView(R.layout.activity_category_edit);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.category_for_edit), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -30,7 +31,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager2 = findViewById(R.id.view_pager);
-        categoryViewPagerAdapter = new CategoryViewPagerAdapter(this, false);
+        categoryViewPagerAdapter = new CategoryViewPagerAdapter(this, true);
         viewPager2.setAdapter(categoryViewPagerAdapter);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

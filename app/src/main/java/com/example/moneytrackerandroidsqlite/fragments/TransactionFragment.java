@@ -5,15 +5,18 @@ import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.moneytrackerandroidsqlite.R;
+import com.example.moneytrackerandroidsqlite.TransactionDetailFragment;
 import com.example.moneytrackerandroidsqlite.adapters.DateGroupAdapter;
 import com.example.moneytrackerandroidsqlite.adapters.TransactionAdapter;
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
@@ -33,22 +36,47 @@ public class TransactionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_transactions, container, false);
-        transactionRepository = new TransactionRepository(getContext());
-        authManager = AuthManager.getInstance(getContext());
+        transactionRepository = new TransactionRepository(getActivity());
+        authManager = AuthManager.getInstance(getActivity());
         rvTransaction = view.findViewById(R.id.rvTransactions);
-        rvTransaction.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvTransaction.setLayoutManager(new LinearLayoutManager(getActivity()));
         loadTx();
         return view;
     }
 
     private void loadTx() {
-        List<Transaction> transactions;
-        transactions = transactionRepository.getAllTx(authManager.getCurrentUser().getId());
+        List<Transaction> transactions = transactionRepository.getAllTx(authManager.getCurrentUser().getId());
+
         if (dateGroupAdapter == null) {
-            dateGroupAdapter = new DateGroupAdapter(getContext(), transactions);
+            dateGroupAdapter = new DateGroupAdapter(getActivity(), transactions, new DateGroupAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Long transactionId) {
+                    TransactionDetailFragment detailFragment = new TransactionDetailFragment();
+                    Bundle args = new Bundle();
+                    args.putLong("transactionId", transactionId);
+                    detailFragment.setArguments(args);
+                    getParentFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out,
+                                    R.anim.fade_in,
+                                    R.anim.slide_out
+                            )
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragment_container, detailFragment)
+                            .addToBackStack("transactions")
+                            .commit();
+                }
+            });
             rvTransaction.setAdapter(dateGroupAdapter);
         } else {
             dateGroupAdapter.setTransactions(transactions);
+            dateGroupAdapter.notifyDataSetChanged();  // Add this line to force refresh
+        }
+
+        // Add this check to ensure adapter is attached
+        if (rvTransaction.getAdapter() == null) {
+            rvTransaction.setAdapter(dateGroupAdapter);
         }
     }
 

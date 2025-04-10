@@ -9,8 +9,10 @@ import com.example.moneytrackerandroidsqlite.fragments.ExpenseFragment;
 import com.example.moneytrackerandroidsqlite.fragments.IncomeFragment;
 
 public class CategoryViewPagerAdapter extends FragmentStateAdapter {
-    public CategoryViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+    Boolean isEdit;
+    public CategoryViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, Boolean isEdit) {
         super(fragmentActivity);
+        this.isEdit = isEdit;
     }
 
     @NonNull
@@ -18,11 +20,11 @@ public class CategoryViewPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new ExpenseFragment();
+                return new ExpenseFragment(isEdit);
             case 1:
-                return new IncomeFragment();
+                return new IncomeFragment(isEdit);
             default:
-                return new ExpenseFragment();
+                return new ExpenseFragment(isEdit);
         }
     }
 

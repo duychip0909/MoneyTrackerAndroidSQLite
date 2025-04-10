@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.moneytrackerandroidsqlite.R;
+import com.example.moneytrackerandroidsqlite.TransactionDetailFragment;
 import com.example.moneytrackerandroidsqlite.adapters.TransactionAdapter;
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
 import com.example.moneytrackerandroidsqlite.models.Transaction;
@@ -72,7 +73,19 @@ public class HomeFragment extends Fragment {
         List<Transaction> recentTxs;
         recentTxs = transactionRepository.getNearestTransactions("2025-04-09", 5);
         if (transactionAdapter == null) {
-            transactionAdapter = new TransactionAdapter(getContext(), recentTxs);
+            transactionAdapter = new TransactionAdapter(getContext(), recentTxs, new TransactionAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Long transactionId) {
+                    TransactionDetailFragment detailFragment = new TransactionDetailFragment();
+                    Bundle args = new Bundle();
+                    args.putLong("transactionId", transactionId);
+                    detailFragment.setArguments(args);
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, detailFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
             rvRecentTransactions.setAdapter(transactionAdapter);
         } else {
             transactionAdapter.setTransactions(recentTxs);

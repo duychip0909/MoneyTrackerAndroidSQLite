@@ -58,6 +58,13 @@ public class LoginActivity extends AppCompatActivity {
                 handleLogin();
             }
         });
+
+        if (authManager.isLoggedIn()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            return;
+        }
     }
 
     private void handleLogin() {

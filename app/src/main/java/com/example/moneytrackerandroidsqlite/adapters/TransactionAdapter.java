@@ -1,7 +1,6 @@
 package com.example.moneytrackerandroidsqlite.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.moneytrackerandroidsqlite.R;
-import com.example.moneytrackerandroidsqlite.TransactionDetailActivity;
 import com.example.moneytrackerandroidsqlite.models.Transaction;
 import java.util.List;
 
@@ -18,9 +16,15 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private Context context;
     private List<Transaction> transactions;
 
-    public TransactionAdapter(Context context, List<Transaction> transactions) {
+    public interface OnItemClickListener {
+        void onItemClick(Long transactionId);
+    }
+    private OnItemClickListener listener;
+
+    public TransactionAdapter(Context context, List<Transaction> transactions, OnItemClickListener listener) {
         this.context = context;
         this.transactions = transactions;
+        this.listener = listener;
     }
 
     @NonNull
@@ -45,9 +49,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.txCate.setText(transaction.getCategoryName());
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, TransactionDetailActivity.class);
-            intent.putExtra("TRANSACTION_ID", transaction.getId());
-            context.startActivity(intent);
+            if (listener != null) {
+                listener.onItemClick(transaction.getId());
+            }
         });
     }
 
