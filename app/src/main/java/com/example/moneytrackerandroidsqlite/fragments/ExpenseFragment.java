@@ -5,19 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.moneytrackerandroidsqlite.CategoryDetailActivity;
-import com.example.moneytrackerandroidsqlite.CreateCategoryFragment;
-import com.example.moneytrackerandroidsqlite.EditCategoryFragment;
+import com.example.moneytrackerandroidsqlite.CreateCategoryActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.ExpenseCategoryAdapter;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
@@ -51,11 +47,7 @@ public class ExpenseFragment extends Fragment {
         view.findViewById(R.id.cardCateAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(view.getContext(), CreateCategoryActivity.class));
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, new CreateCategoryFragment());
-                transaction.addToBackStack(null);
-                transaction.commit();
+                startActivity(new Intent(view.getContext(), CreateCategoryActivity.class));
             }
         });
 
@@ -70,11 +62,17 @@ public class ExpenseFragment extends Fragment {
                 @Override
                 public void onCategoryClick(Category category) {
                     if (getActivity() != null) {
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
-                        resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
-                        getActivity().setResult(Activity.RESULT_OK, resultIntent);
-                        getActivity().finish();
+                        if (isEdit) {
+                            Intent intent = new Intent(getActivity(), CategoryDetailActivity.class);
+                            intent.putExtra("CATE_ID", category.getId());
+                            startActivity(intent);
+                        } else {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("SELECTED_CATEGORY_NAME", category.getName());
+                            resultIntent.putExtra("SELECTED_CATEGORY_ID", category.getId());
+                            getActivity().setResult(Activity.RESULT_OK, resultIntent);
+                            getActivity().finish();
+                        }
                     }
                 }
             });

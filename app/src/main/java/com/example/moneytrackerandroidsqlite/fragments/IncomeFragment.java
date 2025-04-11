@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.moneytrackerandroidsqlite.CategoryDetailActivity;
-import com.example.moneytrackerandroidsqlite.CreateCategoryFragment;
+import com.example.moneytrackerandroidsqlite.CreateCategoryActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.ExpenseCategoryAdapter;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
@@ -47,11 +46,7 @@ public class IncomeFragment extends Fragment {
         view.findViewById(R.id.cardCateAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(getContext(), CreateCategoryActivity.class));
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, new CreateCategoryFragment());
-                transaction.addToBackStack(null);
-                transaction.commit();
+                startActivity(new Intent(getContext(), CreateCategoryActivity.class));
             }
         });
 

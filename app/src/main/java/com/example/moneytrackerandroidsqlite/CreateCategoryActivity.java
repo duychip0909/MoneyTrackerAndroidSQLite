@@ -1,33 +1,39 @@
 package com.example.moneytrackerandroidsqlite;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
-import com.example.moneytrackerandroidsqlite.databinding.FragmentCreateCategoryBinding;
+import com.example.moneytrackerandroidsqlite.databinding.ActivityCreateCategoryBinding;
 import com.example.moneytrackerandroidsqlite.models.Category;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
-public class CreateCategoryFragment extends Fragment {
+public class CreateCategoryActivity extends AppCompatActivity {
     CategoryRepository categoryRepository;
     AuthManager authManager;
-    FragmentCreateCategoryBinding binding;
+    ActivityCreateCategoryBinding binding;
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentCreateCategoryBinding.inflate(inflater, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        binding = ActivityCreateCategoryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.create_cate_activity), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
-        categoryRepository = new CategoryRepository(getContext());
-        authManager = AuthManager.getInstance(getContext());
+        categoryRepository = new CategoryRepository(this);
+        authManager = AuthManager.getInstance(this);
 
         binding.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,11 +45,9 @@ public class CreateCategoryFragment extends Fragment {
         binding.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().popBackStack();
+                finish();
             }
         });
-
-        return binding.getRoot();
     }
 
     private Category.Type getCategoryType() {
@@ -72,8 +76,8 @@ public class CreateCategoryFragment extends Fragment {
         category.setUserId(authManager.getCurrentUser().getId());
         long res = categoryRepository.createCategory(category);
         if (res != -1) {
-            Toast.makeText(getContext(), "Category created successfully", Toast.LENGTH_SHORT).show();
-            getParentFragmentManager().popBackStack();
+            Toast.makeText(this, "Category created successfully", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 }
