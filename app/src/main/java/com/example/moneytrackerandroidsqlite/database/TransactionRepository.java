@@ -94,15 +94,16 @@ public class TransactionRepository {
         return txs;
     }
 
-    public List<Transaction> getNearestTransactions(String targetDate, int limit) {
+    public List<Transaction> getNearestTransactions(String targetDate, int limit, long uid) {
         List<Transaction> transactions = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT t.*, c.name as category_name " +
                 "FROM Transactions t " +
                 "JOIN Categories c ON t.category_id = c.id " +
-                "ORDER BY ABS(julianday(t.date) - julianday(?)) " +
+                "WHERE t.user_id = ? " +
+                "ORDER BY ABS(julianday(t.date) - julianday(?)), t.date DESC " +
                 "LIMIT ?";
-        Cursor cursor = db.rawQuery(query, new String[]{targetDate, String.valueOf(limit)});
+        Cursor cursor = db.rawQuery(query, new String[]{targetDate, String.valueOf(limit), String.valueOf(uid)});
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Transaction transaction = cursorToTx(cursor);

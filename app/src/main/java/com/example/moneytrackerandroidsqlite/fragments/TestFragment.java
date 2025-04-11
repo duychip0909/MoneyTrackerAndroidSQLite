@@ -1,4 +1,4 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.fragments;
 
 import android.os.Bundle;
 
@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.CategoryViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 

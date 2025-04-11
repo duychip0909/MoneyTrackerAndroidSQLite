@@ -8,13 +8,13 @@ public class Budget {
         MONTHLY,
         YEARLY
     }
-    private int id;
-    private int userId;
-    private int categoryId;
+    private long id;
+    private long userId;
+    private long categoryId;
     private double amount;
     private PeriodType periodType;
-    private Date startDate;
-    private Date endDate;
+    private Long startDate;
+    private Long endDate;
     private Date createdAt;
     private Date updatedAt;
 
@@ -25,7 +25,7 @@ public class Budget {
 
     public Budget() {}
 
-    public Budget(int userId, int categoryId, double amount, PeriodType periodType, Date startDate, Date endDate, Date createdAt, Date updatedAt) {
+    public Budget(long userId, long categoryId, double amount, PeriodType periodType, long startDate, long endDate, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.categoryId = categoryId;
         this.amount = amount;
@@ -36,27 +36,27 @@ public class Budget {
         this.updatedAt = new Date();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public int getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -76,19 +76,19 @@ public class Budget {
         this.periodType = periodType;
     }
 
-    public Date getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(long endDate) {
         this.endDate = endDate;
     }
 

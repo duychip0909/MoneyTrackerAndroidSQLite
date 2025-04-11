@@ -1,6 +1,5 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.activities;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -17,11 +16,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.moneytrackerandroidsqlite.activities.CategoryActivity;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
 import com.example.moneytrackerandroidsqlite.databinding.ActivityEditTransactionBinding;
@@ -52,11 +47,11 @@ public class EditTransactionActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = ActivityEditTransactionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_tx), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_tx), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
         txId = getIntent().getLongExtra("TRANSACTION_EDIT_ID", -1);
 
         if (txId == -1) {

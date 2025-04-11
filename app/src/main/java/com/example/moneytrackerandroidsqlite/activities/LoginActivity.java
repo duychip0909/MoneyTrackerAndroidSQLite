@@ -2,6 +2,7 @@ package com.example.moneytrackerandroidsqlite.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                finish();
             }
         });
 
@@ -70,13 +72,29 @@ public class LoginActivity extends AppCompatActivity {
     private void handleLogin() {
         String usernameData = username.getText().toString().trim();
         String passwordData = password.getText().toString().trim();
+
+        if (TextUtils.isEmpty(usernameData)) {
+            username.setError("Username is required");
+            username.requestFocus();
+            return;
+        }
+
+        if (TextUtils.isEmpty(passwordData)) {
+            username.setError("Password is required");
+            username.requestFocus();
+            return;
+        }
+
         User user = userRepository.authenticate(usernameData, passwordData);
+
         if (user != null) {
             authManager.setLoggedInUser(user);
-            Toast.makeText(this, "Login successffully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, MainActivity.class));
             finish();
+        } else {
+            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+            return;
         }
-        return;
     }
 }

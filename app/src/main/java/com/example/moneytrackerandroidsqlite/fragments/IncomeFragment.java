@@ -12,8 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.moneytrackerandroidsqlite.CategoryDetailActivity;
-import com.example.moneytrackerandroidsqlite.CreateCategoryActivity;
+import com.example.moneytrackerandroidsqlite.activities.CategoryDetailActivity;
+import com.example.moneytrackerandroidsqlite.activities.CreateCategoryActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.adapters.ExpenseCategoryAdapter;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;

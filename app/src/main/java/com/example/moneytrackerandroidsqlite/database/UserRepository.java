@@ -9,36 +9,34 @@ import android.util.Log;
 import com.example.moneytrackerandroidsqlite.models.User;
 import com.example.moneytrackerandroidsqlite.utils.SecurityUtils;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class UserRepository {
-    private DBHelper dbHelper;
-    private SimpleDateFormat dateFormat;
+    private final DBHelper dbHelper;
+    private final SimpleDateFormat dateFormat;
     public UserRepository(Context context) {
         this.dbHelper = DBHelper.getInstance(context);
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     }
-    public long createNewUser(User user) {
+    public boolean createNewUser(String email, String username, String password) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long id = -1;
-        try {
-            ContentValues values = new ContentValues();
-            values.put("username", user.getUsername());
-            values.put("email", user.getEmail());
-            values.put("password", user.getPassword());
-            values.put("created_at", dateFormat.format(new Date()));
+        ContentValues values = new ContentValues();
+        // Hash the password using BCrypt
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            id = db.insert("Users", null, values);
-            if (id != -1) {
-                user.setId(id);
-            }
-        } catch (Exception e) {
-            Log.e("UserRepo", "Error inserting user: " + e.getMessage());
-        }
-        return id;
+        values.put("email", email);
+        values.put("username", username);
+        values.put("password", hashedPassword);
+
+        // Insert row
+        long id = db.insert("Users", null, values);
+        db.close();
+        return id != -1;
     }
     public boolean updateUser(User user) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -97,15 +95,11 @@ public class UserRepository {
     }
     public User authenticate(String username, String password) {
         User user = getUserByUsername(username);
-        if (user != null) {
-//            if (SecurityUtils.verifyPassword(password, user.getPassword())) {
-//                updateLastLogin(user.getId());
-//                return user;
-//            }
-            if (password.equals(user.getPassword())) {
-                updateLastLogin(user.getId());
-                return user;
-            }
+        boolean valid = false;
+        valid = BCrypt.checkpw(password, user.getPassword());
+        if (valid) {
+            updateLastLogin(user.getId());
+            return user;
         }
         return null;
     }
@@ -119,6 +113,24 @@ public class UserRepository {
         } catch (Exception e) {
             Log.e("UserRepo", "Error updating last login: " + e.getMessage());
         }
+    }
+
+    public boolean isUsernameExists(String username) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("Users", null, "username = ?", new String[]{username}, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
+    }
+
+    public boolean isEmailExists(String email) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("Users", null, "email = ?", new String[]{email}, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
     }
 
     private User cursorToUser(Cursor cursor) {

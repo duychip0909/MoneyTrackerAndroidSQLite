@@ -1,9 +1,15 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.activities;
+
+import static android.app.Activity.RESULT_OK;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +25,6 @@ import android.widget.Toast;
 
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
 import com.example.moneytrackerandroidsqlite.databinding.FragmentTransactionDetailBinding;
-import com.example.moneytrackerandroidsqlite.fragments.TransactionFragment;
 import com.example.moneytrackerandroidsqlite.models.Transaction;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
@@ -36,6 +41,19 @@ public class TransactionDetailFragment extends Fragment {
     AuthManager authManager;
     Transaction transaction;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-YYYY", Locale.getDefault());
+
+    private final ActivityResultLauncher<Intent> editTransactionLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult o) {
+                    if (o.getResultCode() == RESULT_OK) {
+                        loadTransactionData();
+                    }
+                }
+            }
+    );
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,7 +115,9 @@ public class TransactionDetailFragment extends Fragment {
     }
 
     private void launchEditTransaction() {
-
+        Intent intent = new Intent(getActivity(), EditTransactionActivity.class);
+        intent.putExtra("TRANSACTION_EDIT_ID", txId);
+        editTransactionLauncher.launch(intent);
     }
 
     private void handleDeleteTx() {

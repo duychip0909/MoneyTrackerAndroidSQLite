@@ -2,7 +2,6 @@ package com.example.moneytrackerandroidsqlite.fragments;
 
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.moneytrackerandroidsqlite.R;
-import com.example.moneytrackerandroidsqlite.TransactionDetailFragment;
+import com.example.moneytrackerandroidsqlite.activities.TransactionDetailFragment;
 import com.example.moneytrackerandroidsqlite.adapters.TransactionAdapter;
 import com.example.moneytrackerandroidsqlite.database.TransactionRepository;
 import com.example.moneytrackerandroidsqlite.models.Transaction;
@@ -22,7 +21,6 @@ import com.example.moneytrackerandroidsqlite.utils.AuthManager;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -71,7 +69,7 @@ public class HomeFragment extends Fragment {
 
     private void loadTx() {
         List<Transaction> recentTxs;
-        recentTxs = transactionRepository.getNearestTransactions("2025-04-09", 5);
+        recentTxs = transactionRepository.getNearestTransactions("2025-04-09", 5, authManager.getCurrentUser().getId());
         if (transactionAdapter == null) {
             transactionAdapter = new TransactionAdapter(getContext(), recentTxs, new TransactionAdapter.OnItemClickListener() {
                 @Override

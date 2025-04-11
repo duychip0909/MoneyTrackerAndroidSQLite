@@ -1,6 +1,5 @@
-package com.example.moneytrackerandroidsqlite;
+package com.example.moneytrackerandroidsqlite.activities;
 
-import android.app.Instrumentation;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.moneytrackerandroidsqlite.activities.CategoryEditActivity;
+import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.database.CategoryRepository;
 import com.example.moneytrackerandroidsqlite.databinding.ActivityCategoryDetailBinding;
 import com.example.moneytrackerandroidsqlite.models.Category;
