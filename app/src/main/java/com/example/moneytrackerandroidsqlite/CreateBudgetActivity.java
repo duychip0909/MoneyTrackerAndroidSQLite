@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.moneytrackerandroidsqlite.activities.CategoryActivity;
 import com.example.moneytrackerandroidsqlite.database.BudgetRepository;
+import com.example.moneytrackerandroidsqlite.database.BudgetTransactionRepository;
 import com.example.moneytrackerandroidsqlite.databinding.ActivityCreateBudgetBinding;
 import com.example.moneytrackerandroidsqlite.models.Budget;
 import com.example.moneytrackerandroidsqlite.utils.AuthManager;
@@ -39,14 +40,11 @@ public class CreateBudgetActivity extends AppCompatActivity {
     private RadioGroup rgPeriodType;
     private TextView tvStartDate, tvEndDate, tvBudgetFormTitle;
     private Button btnSaveBudget, btnCancel;
-
-//    private FinanceDBHelper dbHelper;
-
     private Budget existingBudget;
     private long userId;
     private boolean isEditMode = false;
-    private AuthManager authManager;
     private long selectedCategoryId;
+    private BudgetTransactionRepository budgetTransactionRepository;
 
     private long startDate;
     private long endDate;
@@ -61,7 +59,8 @@ public class CreateBudgetActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        authManager = AuthManager.getInstance(this);
+        AuthManager authManager = AuthManager.getInstance(this);
+        budgetTransactionRepository = new BudgetTransactionRepository(this);
         userId = authManager.getCurrentUser().getId();
         initViews();
         if (getIntent().hasExtra("BUDGET_ID")) {
@@ -225,16 +224,17 @@ public class CreateBudgetActivity extends AppCompatActivity {
 
         BudgetRepository budgetRepository = new BudgetRepository(this);
         boolean success;
-
+        long budgetId = -1;
         if (isEditMode) {
             int rowsAffected = budgetRepository.updateBudget(budget);
             success = rowsAffected > 0;
         } else {
-            long budgetId = budgetRepository.createBudget(budget);
+            budgetId = budgetRepository.createBudget(budget);
             success = budgetId != -1;
         }
 
         if (success) {
+//            budgetTransactionRepository.associateTransactionWithBudget(budgetId, )
             Toast.makeText(this, isEditMode ? "Budget updated" : "Budget created", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();

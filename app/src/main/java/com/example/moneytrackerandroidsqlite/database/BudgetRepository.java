@@ -57,15 +57,12 @@ public class BudgetRepository {
     public List<Budget> getBudgetsByUserId(long userId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<Budget> budgets = new ArrayList<>();
-
-        Cursor cursor = db.query(
-                "Budgets",
-                null,
-                "user_id = ?",
-                new String[]{String.valueOf(userId)},
-                null,
-                null,
-                "start_date DESC"
+        String query = "SELECT b.*, c.name as category_name " +
+                "FROM Budgets b " +
+                "JOIN Categories c ON b.category_id = c.id " +
+                "WHERE b.id = ?";
+        Cursor cursor = db.rawQuery(query,
+                new String[]{String.valueOf(userId)}
         );
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -145,6 +142,8 @@ public class BudgetRepository {
 
         String endDate = cursor.getString(cursor.getColumnIndexOrThrow("end_date"));
         budget.setEndDate(Long.parseLong(endDate));
+
+        budget.setCategoryName(cursor.getString(cursor.getColumnIndexOrThrow("category_name")));
 
         return budget;
     }

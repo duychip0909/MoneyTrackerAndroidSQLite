@@ -40,8 +40,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
         Budget budget = budgets.get(position);
         holder.categoryBudget.setText(budget.getCategoryName());
-        holder.budgetAmount.setText(String.format("%,.0fđ", budget.getSpentAmount()));
-        holder.budgetAmount.setText(String.format("%,.0fđ", budget.getRemainingAmount()));
+        holder.budgetAmount.setText(String.format("%,.0fđ", budget.getAmount()));
+        holder.remainingAmount.setText(String.format("%,.0fđ", budget.getRemainingAmount()));
         int progress = (int) budget.getProgressPercentage();
         holder.progressBar.setProgress(progress);
         holder.cardBudget.setOnClickListener(new View.OnClickListener() {
