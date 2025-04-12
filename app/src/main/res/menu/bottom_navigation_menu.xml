@@ -11,7 +11,6 @@
     <item
         android:id="@+id/fab"
         android:title=""
-        android:icon="@drawable/ic_add"
         android:enabled="false"/>
     <item
         android:id="@+id/budget_frag"
