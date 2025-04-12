@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/category"
     android:layout_width="match_parent"
+    android:background="#F5F5F5"
     android:layout_height="match_parent"
     tools:context=".activities.CategoryActivity">
     <com.google.android.material.tabs.TabLayout

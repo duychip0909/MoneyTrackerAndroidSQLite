@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/category_detail"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
     <!-- Toolbar with Title and Edit Icon -->

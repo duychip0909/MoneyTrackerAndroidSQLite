@@ -103,7 +103,7 @@ public class TransactionRepository {
                 "WHERE t.user_id = ? " +
                 "ORDER BY ABS(julianday(t.date) - julianday(?)), t.date DESC " +
                 "LIMIT ?";
-        Cursor cursor = db.rawQuery(query, new String[]{targetDate, String.valueOf(limit), String.valueOf(uid)});
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(uid), targetDate, String.valueOf(limit)});
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Transaction transaction = cursorToTx(cursor);
@@ -141,5 +141,45 @@ public class TransactionRepository {
         transaction.setCategoryName(cursor.getString(cursor.getColumnIndexOrThrow("category_name")));
 
         return transaction;
+    }
+
+
+    public double getTotalIncome(long userId) {
+        double total = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT SUM(amount) FROM transactions WHERE user_id = ? AND type = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId),
+                String.valueOf(Transaction.Type.INCOME)});
+
+        if (cursor.moveToFirst()) {
+            total = cursor.getDouble(0);
+        }
+        cursor.close();
+
+        return total;
+    }
+
+    public double getTotalExpenses(long userId) {
+        double total = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT SUM(amount) FROM transactions WHERE user_id = ? AND type = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId),
+                String.valueOf(Transaction.Type.EXPENSE)});
+
+        if (cursor.moveToFirst()) {
+            total = cursor.getDouble(0);
+        }
+        cursor.close();
+
+        return total;
+    }
+
+    public double getCurrentBalance(long userId) {
+        double income = getTotalIncome(userId);
+        double expenses = getTotalExpenses(userId);
+
+        return income - expenses;
     }
 }

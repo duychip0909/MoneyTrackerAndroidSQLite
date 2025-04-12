@@ -49,8 +49,8 @@ public class HomeFragment extends Fragment {
         tvExpensesAmount = view.findViewById(R.id.tvExpensesAmount);
         rvRecentTransactions = view.findViewById(R.id.rvRecentTransactions);
 
-        transactionRepository = new TransactionRepository(view.getContext());
 
+        transactionRepository = new TransactionRepository(view.getContext());
         // Set date
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
         tvDate.setText(dateFormat.format(new Date()));
@@ -68,8 +68,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadTx() {
+        tvBalanceAmount.setText(String.format("%,.0fđ", transactionRepository.getCurrentBalance(authManager.getCurrentUser().getId())));
+        tvIncomeAmount.setText(String.format("%,.0fđ", transactionRepository.getTotalIncome(authManager.getCurrentUser().getId())));
+        tvExpensesAmount.setText(String.format("%,.0fđ", transactionRepository.getTotalExpenses(authManager.getCurrentUser().getId())));
         List<Transaction> recentTxs;
-        recentTxs = transactionRepository.getNearestTransactions("2025-04-09", 5, authManager.getCurrentUser().getId());
+        recentTxs = transactionRepository.getNearestTransactions(new Date().toString(), 5, authManager.getCurrentUser().getId());
         if (transactionAdapter == null) {
             transactionAdapter = new TransactionAdapter(getContext(), recentTxs, new TransactionAdapter.OnItemClickListener() {
                 @Override
@@ -87,6 +90,11 @@ public class HomeFragment extends Fragment {
             rvRecentTransactions.setAdapter(transactionAdapter);
         } else {
             transactionAdapter.setTransactions(recentTxs);
+            transactionAdapter.notifyDataSetChanged();
+        }
+
+        if (rvRecentTransactions.getAdapter() == null) {
+            rvRecentTransactions.setAdapter(transactionAdapter);
         }
     }
 }

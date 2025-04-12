@@ -27,14 +27,12 @@ public class UserRepository {
     public boolean createNewUser(String email, String username, String password) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        // Hash the password using BCrypt
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         values.put("email", email);
         values.put("username", username);
         values.put("password", hashedPassword);
 
-        // Insert row
         long id = db.insert("Users", null, values);
         db.close();
         return id != -1;
@@ -154,5 +152,21 @@ public class UserRepository {
             Log.e("UserRepo", "Error parsing date: " + e.getMessage());
         }
         return user;
+    }
+
+    public boolean changeUserPassword(long userId, String newHashedPassword) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        boolean success = false;
+        try {
+            ContentValues values = new ContentValues();
+            values.put("password", newHashedPassword);
+            int rowsAffected = db.update("Users", values, "id = ?", new String[]{String.valueOf(userId)});
+            success = rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e("UserRepo", "Error changing password: " + e.getMessage());
+        } finally {
+            db.close();
+        }
+        return success;
     }
 }

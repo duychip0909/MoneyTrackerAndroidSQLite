@@ -54,7 +54,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                 "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                 "FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE, " +
-                "FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE RESTRICT" + ")");
+                "FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE" + ")");
 
         //create budget table
         db.execSQL("CREATE TABLE Budgets (" +
@@ -90,6 +90,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 "BEGIN " +
                 "    UPDATE Budgets SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id; " +
                 "END");
+
+        db.execSQL("CREATE TRIGGER delete_category_transactions " +
+                "BEFORE DELETE ON Categories " +
+                "FOR EACH ROW " +
+                "BEGIN " +
+                "    DELETE FROM Transactions WHERE category_id = OLD.id; " +
+                "END;");
 
         insertDefaultCategories(db);
     }

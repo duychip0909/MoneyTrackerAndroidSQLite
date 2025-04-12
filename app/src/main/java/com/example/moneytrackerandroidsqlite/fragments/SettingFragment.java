@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.moneytrackerandroidsqlite.ChangePasswordActivity;
 import com.example.moneytrackerandroidsqlite.R;
 import com.example.moneytrackerandroidsqlite.activities.CategoryEditActivity;
 import com.example.moneytrackerandroidsqlite.activities.LoginActivity;
@@ -35,6 +36,13 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), CategoryEditActivity.class));
+            }
+        });
+
+        view.findViewById(R.id.change_password_option).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ChangePasswordActivity.class));
             }
         });
 
